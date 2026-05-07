@@ -1,0 +1,23 @@
+# 测试文件
+tests/
+
+# 数据生成工具脚本
+data/tools/
+data/add-fields.js
+data/debug.js
+
+# 注入脚本
+_inject_unit_id.js
+
+# IDE 配置
+.vscode/
+.idea/
+.trae/
+
+# 系统文件
+Thumbs.db
+.DS_Store
+
+# 本地临时文件
+*.log
+*.tmp

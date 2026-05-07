@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>外研社七下英语 · 智能学习平台</title>
+  <link rel="stylesheet" href="styles/main.css">
+  <link rel="stylesheet" href="styles/enhanced-words.css">
+</head>
+
+<body>
+  <button id="sidebarFoldBtn" title="折叠侧边栏">◀</button>
+  <div class="app-layout">
+    <nav class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="logo">📚 七下英语</div>
+        <div class="logo-sub">外研社 · 智能学习平台</div>
+      </div>
+      <div class="nav-groups" id="navGroups">
+        <div class="nav-group expanded" data-group="core">
+          <div class="nav-group-title">🎯 核心学习</div>
+          <ul class="nav-group-items">
+            <li class="nav-item nav-item-dragon" data-module="dragon">
+              <span class="nav-icon">🐉</span>
+              <div class="nav-item-detail">
+                <span class="nav-text">一条龙</span>
+                <span class="nav-desc">7阶段 · 新课→练习→复习→错题→阅读→诊断→补漏</span>
+              </div>
+              <span class="nav-badge nav-badge-dragon">全链路</span>
+            </li>
+            <li class="nav-item" data-module="smart-words">
+              <span class="nav-icon">🧠</span>
+              <div class="nav-item-detail">
+                <span class="nav-text">智能学习</span>
+                <span class="nav-desc">SM-2算法 · 7模式 · 单元解锁</span>
+              </div>
+              <span class="nav-badge nav-badge-primary" id="navBadgeSmartWords">--</span>
+            </li>
+            <li class="nav-item" data-module="knowledge-map">
+              <span class="nav-icon">🗺️</span>
+              <div class="nav-item-detail">
+                <span class="nav-text">知识地图</span>
+                <span class="nav-desc">词汇关联 · 语法图谱</span>
+              </div>
+              <span class="nav-badge nav-badge-primary">New</span>
+            </li>
+          </ul>
+        </div>
+        <div class="nav-group expanded" data-group="practice">
+          <div class="nav-group-title"> 专项练习</div>
+          <ul class="nav-group-items">
+            <li class="nav-item" data-module="words">
+              <span class="nav-icon">📖</span>
+              <div class="nav-item-detail">
+                <span class="nav-text">单词学习</span>
+                <span class="nav-desc">标准模式 · 课文例句</span>
+              </div>
+            </li>
+            <li class="nav-item" data-module="enhanced-words">
+              <span class="nav-icon">✨</span>
+              <div class="nav-item-detail">
+                <span class="nav-text">加强单词</span>
+                <span class="nav-desc">强化模式 · 多轮复习</span>
+              </div>
+            </li>
+            <li class="nav-item" data-module="spelling">
+              <span class="nav-icon">✍️</span>
+              <div class="nav-item-detail">
+                <span class="nav-text">拼写练习</span>
+                <span class="nav-desc">听写 · 默写</span>
+              </div>
+            </li>
+            <li class="nav-item" data-module="flashcards">
+              <span class="nav-icon">🃏</span>
+              <div class="nav-item-detail">
+                <span class="nav-text">闪卡记忆</span>
+                <span class="nav-desc">快速过词</span>
+              </div>
+            </li>
+            <li class="nav-item" data-module="grammar">
+              <span class="nav-icon">📐</span>
+              <div class="nav-item-detail">
+                <span class="nav-text">语法学习</span>
+                <span class="nav-desc">基础知识</span>
+              </div>
+            </li>
+            <li class="nav-item" data-module="advanced-grammar">
+              <span class="nav-icon">🏗️</span>
+              <div class="nav-item-detail">
+                <span class="nav-text">高级语法</span>
+                <span class="nav-desc">进阶知识</span>
+              </div>
+            </li>
+            <li class="nav-item" data-module="exercises">
+              <span class="nav-icon">📋</span>
+              <div class="nav-item-detail">
+                <span class="nav-text">练习题</span>
+                <span class="nav-desc">单元练习</span>
+              </div>
+            </li>
+            <li class="nav-item" data-module="exam-prep">
+              <span class="nav-icon">🎯</span>
+              <div class="nav-item-detail">
+                <span class="nav-text">考试准备</span>
+                <span class="nav-desc">模拟测试</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div class="nav-group expanded" data-group="progress">
+          <div class="nav-group-title">📊 复习与进度</div>
+          <ul class="nav-group-items">
+            <li class="nav-item" data-module="review">
+              <span class="nav-icon">🔄</span>
+              <div class="nav-item-detail">
+                <span class="nav-text">复习计划</span>
+                <span class="nav-desc">SM-2间隔复习</span>
+              </div>
+              <span class="nav-badge nav-badge-warning" id="navBadgeReview">--</span>
+            </li>
+            <li class="nav-item" data-module="mistakes">
+              <span class="nav-icon">📕</span>
+              <div class="nav-item-detail">
+                <span class="nav-text">错题本</span>
+                <span class="nav-desc">错题分类 · 归因分析</span>
+              </div>
+              <span class="nav-badge nav-badge-danger" id="navBadgeMistakes">--</span>
+            </li>
+            <li class="nav-item" data-module="progress">
+              <span class="nav-icon">📈</span>
+              <div class="nav-item-detail">
+                <span class="nav-text">学习进度</span>
+                <span class="nav-desc">数据统计</span>
+              </div>
+            </li>
+            <li class="nav-item" data-module="dashboard">
+              <span class="nav-icon">📊</span>
+              <div class="nav-item-detail">
+                <span class="nav-text">学习仪表盘</span>
+                <span class="nav-desc">热力图 · 能力曲线</span>
+              </div>
+            </li>
+            <li class="nav-item" data-module="goals">
+              <span class="nav-icon">🎯</span>
+              <div class="nav-item-detail">
+                <span class="nav-text">学习目标</span>
+                <span class="nav-desc">目标设置 · 追踪</span>
+              </div>
+            </li>
+            <li class="nav-item" data-module="achievements">
+              <span class="nav-icon">🏆</span>
+              <div class="nav-item-detail">
+                <span class="nav-text">成就系统</span>
+                <span class="nav-desc">徽章 · 奖励</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+        <div class="nav-group expanded" data-group="system">
+          <div class="nav-group-title">⚙️ 系统</div>
+          <ul class="nav-group-items">
+            <li class="nav-item" data-module="assistant">
+              <span class="nav-icon">🤖</span>
+              <div class="nav-item-detail">
+                <span class="nav-text">学习助手</span>
+                <span class="nav-desc">个性化建议</span>
+              </div>
+            </li>
+            <li class="nav-item" data-module="settings">
+              <span class="nav-icon">⚙️</span>
+              <div class="nav-item-detail">
+                <span class="nav-text">设置</span>
+                <span class="nav-desc">偏好配置</span>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <main class="main-content">
+      <header class="top-bar">
+        <div class="module-title" id="moduleTitle">🐉 一条龙</div>
+        <div class="top-bar-actions">
+          <div class="top-bar-stats" id="topBarStats">已学: -- 词 | 正确率: --%</div>
+        </div>
+      </header>
+      <div class="module-content" id="moduleContent"></div>
+    </main>
+  </div>
+  <div class="error-watchdog" id="errorWatchdog">
+    <div class="watchdog-badge" id="watchdogBadge">🐕 0</div>
+    <div class="watchdog-panel" id="watchdogPanel" style="display:none;"></div>
+  </div>
+  <script src="data/grade7-data.js?v=5.0.0"></script>
+  <script src="scripts/adaptive-engine.js?v=5.0.0"></script>
+  <script src="scripts/active-recall.js?v=5.0.0"></script>
+  <script src="scripts/audio-system.js?v=5.0.0"></script>
+  <script src="scripts/xp-system.js?v=5.0.0"></script>
+  <script src="scripts/celebration.js?v=5.0.0"></script>
+  <script src="scripts/daily-calendar.js?v=5.0.0"></script>
+  <script src="scripts/quick-challenge.js?v=5.0.0"></script>
+  <script src="scripts/encouragement-system.js?v=5.0.0"></script>
+  <script src="scripts/utils.js?v=5.0.0"></script>
+  <script src="scripts/storage-enhanced.js?v=5.0.0"></script>
+  <script src="scripts/data-bridge.js?v=5.0.0"></script>
+  <script src="scripts/module-interface.js?v=5.0.0"></script>
+  <script src="scripts/performance-optimizer.js?v=5.0.0"></script>
+  <script src="scripts/words-module.js?v=5.0.0"></script>
+  <script src="scripts/enhanced-words-module.js?v=5.0.0"></script>
+  <script src="scripts/spelling-module.js?v=5.0.0"></script>
+  <script src="scripts/flashcard-module.js?v=5.0.0"></script>
+  <script src="scripts/achievements-module.js?v=5.0.0"></script>
+  <script src="scripts/goals-module.js?v=5.0.0"></script>
+  <script src="scripts/assistant-module.js?v=5.0.0"></script>
+  <script src="scripts/exercises-module.js?v=5.0.0"></script>
+  <script src="scripts/grammar-module.js?v=5.0.0"></script>
+  <script src="scripts/advanced-grammar-module.js?v=5.0.0"></script>
+  <script src="scripts/diagnostic-module.js?v=5.0.0"></script>
+  <script src="scripts/grammar-system-module.js?v=5.0.0"></script>
+  <script src="scripts/exam-strategy-module.js?v=5.0.0"></script>
+  <script src="scripts/mock-exam-module.js?v=5.0.0"></script>
+  <script src="scripts/dashboard-module.js?v=5.0.0"></script>
+  <script src="scripts/mistake-analysis-system.js?v=5.0.0"></script>
+  <script src="scripts/spaced-repetition.js?v=5.0.0"></script>
+  <script src="scripts/smart-words-module.js?v=5.0.0"></script>
+  <script src="scripts/mistakes-module.js?v=5.0.0"></script>
+  <script src="scripts/review-module.js?v=5.0.0"></script>
+  <script src="scripts/progress-module.js?v=5.0.0"></script>
+  <script src="scripts/exam-prep-module.js?v=5.0.0"></script>
+  <script src="scripts/ebbinghaus-scheduler.js?v=5.0.0"></script>
+  <script src="scripts/memory-tracker.js?v=5.0.0"></script>
+  <script src="scripts/pronunciation-trainer.js?v=5.0.0"></script>
+  <script src="scripts/dragon-mode.js?v=5.0.0"></script>
+  <script src="scripts/settings-module.js?v=5.0.0"></script>
+  <script src="scripts/focus-mode.js?v=6.0.0"></script>
+  <script src="scripts/ambient-sound.js?v=6.0.0"></script>
+  <script src="scripts/smart-eye-care.js?v=6.0.0"></script>
+  <script src="scripts/feynman-method.js?v=6.0.0"></script>
+  <script src="scripts/interleaved-practice.js?v=6.0.0"></script>
+  <script src="scripts/self-explanation.js?v=6.0.0"></script>
+  <script src="scripts/association-builder.js?v=6.0.0"></script>
+  <script src="scripts/contrast-drill.js?v=6.0.0"></script>
+  <script src="scripts/pomodoro-timer.js?v=6.0.0"></script>
+  <script src="scripts/peak-time-analyzer.js?v=6.0.0"></script>
+  <script src="scripts/daily-planner.js?v=6.0.0"></script>
+  <script src="scripts/break-reminder.js?v=6.0.0"></script>
+  <script src="scripts/spiral-review.js?v=6.0.0"></script>
+  <script src="scripts/knowledge-map.js?v=6.0.0"></script>
+  <script src="scripts/weekly-quiz.js?v=6.0.0"></script>
+  <script src="scripts/auto-notes.js?v=6.0.0"></script>
+  <script src="scripts/journey-map.js?v=6.0.0"></script>
+  <script src="scripts/prestudy-check.js?v=6.0.0"></script>
+  <script src="scripts/poststudy-reflection.js?v=6.0.0"></script>
+  <script src="scripts/pace-regulator.js?v=6.0.0"></script>
+  <script src="scripts/milestone-review.js?v=6.0.0"></script>
+  <script src="scripts/peer-ranking.js?v=6.0.0"></script>
+  <script src="scripts/difficulty-engine.js?v=6.0.0"></script>
+  <script src="scripts/progressive-hints.js?v=6.0.0"></script>
+  <script src="scripts/dictation-mistake-sync.js?v=6.0.0"></script>
+  <script src="scripts/feedback-buttons.js?v=6.0.0"></script>
+  <script src="scripts/preview-engine.js?v=6.0.0"></script>
+  <script src="scripts/memory-self-assessment.js?v=6.0.0"></script>
+  <script src="scripts/learning-flow-controller.js?v=6.0.0"></script>
+  <script src="scripts/app.js?v=5.0.0"></script>
+  <script src="scripts/error-watchdog.js?v=5.0.0"></script>
+</body>
+
+</html>
