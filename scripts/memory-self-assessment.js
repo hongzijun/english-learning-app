@@ -116,28 +116,26 @@ var MemorySelfAssessment = {
   },
 
   planLearningPath: function (results) {
-    var priority = [], consolidate = [], allQuick = [];
+    var priority = [], consolidate = [], quickOnly = [];
     for (var i = 0; i < results.length; i++) {
       var r = results[i];
       var item = { wordId: r.wordId, word: r.word, meaning: r.meaning };
       if (r.level <= 2) priority.push(Object.assign({ originalLevel: r.level }, item));
       else if (r.level === 3) consolidate.push(item);
-      else allQuick.push(item);
+      else if (r.level === 4) quickOnly.push(item);
     }
     priority.sort(function (a, b) { return a.originalLevel - b.originalLevel; });
-    var sampleCount = Math.ceil(allQuick.length * 0.3);
-    var shuffled = allQuick.slice();
+    var shuffled = quickOnly.slice();
     for (var j = shuffled.length - 1; j > 0; j--) {
       var k = Math.floor(Math.random() * (j + 1));
       var t = shuffled[j]; shuffled[j] = shuffled[k]; shuffled[k] = t;
     }
     return {
       priority: priority, consolidate: consolidate,
-      quickVerify: shuffled.slice(0, sampleCount),
+      quickVerify: shuffled,
       stats: {
         total: results.length, priorityCount: priority.length,
-        consolidateCount: consolidate.length, quickVerifyCount: allQuick.length,
-        sampleCount: sampleCount
+        consolidateCount: consolidate.length, quickVerifyCount: quickOnly.length
       }
     };
   },
@@ -159,7 +157,7 @@ var MemorySelfAssessment = {
       '<div style="background:#eff6ff;border-radius:10px;padding:12px;margin-bottom:10px;">' +
       '<strong>🔵 巩固学习：' + s.consolidateCount + ' 个词</strong></div>' +
       '<div style="background:#f0fdf4;border-radius:10px;padding:12px;margin-bottom:10px;">' +
-      '<strong>🟢 快速验证：' + s.quickVerifyCount + ' 个词（抽检' + s.sampleCount + '个）</strong></div>' +
+      '<strong>🟢 快速验证：' + s.quickVerifyCount + ' 个词</strong></div>' +
       '<p style="text-align:center;color:#6b7280;font-size:0.9rem;margin:12px 0;">' +
       '⏱ 预计学习时间：约 ' + Math.max(1, Math.round(s.total * 0.5)) + ' 分钟</p>' +
       '<button onclick="' + btnAction + '" style="width:100%;padding:14px;' +

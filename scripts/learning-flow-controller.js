@@ -49,18 +49,122 @@ const LearningFlowController = {
     }
     return counts;
   },
+  _shuffle: function (arr) {
+    var a = arr.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  },
   _renderMemoryPanel: function () {
     var c = this._getMemoryLevelCounts();
     var show = (this._stage === 'plan' || this._stage === 'memoryLearn' || this._stage === 'finalCheck');
     if (!show || Object.keys(this._memoryLevels).length === 0) return '';
-    var parts = [];
-    for (var i = 0; i < MEMORY_LEVELS.length; i++) {
+    var total = 0;
+    for (var k in c) total += c[k];
+    if (!total) return '';
+    var segs = [];
+    var legendItems = [];
+    for (var i = MEMORY_LEVELS.length - 1; i >= 0; i--) {
       var ml = MEMORY_LEVELS[i];
       var n = c[ml.level] || 0;
-      parts.push('<span style="color:' + ml.color + ';font-weight:600;">' + ml.label + '(' + n + ')</span>');
+      var pct = Math.round((n / total) * 100);
+      if (n > 0) {
+        segs.push('<div data-level="' + ml.level + '" style="width:' + pct + '%;background:' + ml.color + ';' +
+          'display:flex;align-items:center;justify-content:center;' +
+          'transition:width 1s cubic-bezier(0.25,1,0.5,1);border-radius:' + (segs.length === 0 ? '10px 0 0 10px' : '0') + ' ' +
+          (i === 0 ? '0 10px 10px 0' : '0') + ';' +
+          'position:relative;overflow:hidden;">' +
+          '<span class="viz-pct" style="font-size:0.85rem;font-weight:800;color:white;text-shadow:0 1px 2px rgba(0,0,0,0.3);' +
+          'white-space:nowrap;z-index:1;transition:all 0.4s ease;">' + pct + '%</span>' +
+          '</div>');
+      }
+      legendItems.push('<div class="viz-legend-item" data-level="' + ml.level + '" style="display:flex;align-items:center;gap:6px;padding:4px 0;">' +
+        '<span style="width:14px;height:14px;border-radius:4px;background:' + ml.color + ';flex-shrink:0;"></span>' +
+        '<span style="font-size:0.82rem;color:#374151;font-weight:500;min-width:64px;">' + ml.label + '</span>' +
+        '<span class="viz-count" style="font-size:1rem;font-weight:800;color:' + ml.color + ';">' + n + '</span>' +
+        '<span class="viz-pct2" style="font-size:0.75rem;color:#9ca3af;margin-left:auto;">' + pct + '%</span></div>');
     }
-    return '<div style="background:#f8fafc;border-radius:8px;padding:6px 10px;margin-bottom:8px;' +
-      'font-size:0.72rem;text-align:center;position:sticky;top:0;z-index:10;">' + parts.join(' | ') + '</div>';
+    return '<div id="memoryViz" style="margin-top:20px;padding:16px 20px;' +
+      'background:linear-gradient(135deg,#f8fafc,#f1f5f9);border-radius:16px;' +
+      'box-shadow:inset 0 2px 6px rgba(0,0,0,0.04);">' +
+      '<div style="text-align:center;margin-bottom:12px;">' +
+      '<span style="font-size:0.88rem;color:#6b7280;font-weight:600;">📊 记忆分布 · 共 ' + total + ' 个词</span></div>' +
+      '<div style="display:flex;height:42px;border-radius:10px;overflow:hidden;' +
+      'box-shadow:0 3px 10px rgba(0,0,0,0.08);margin-bottom:16px;">' +
+      segs.join('') + '</div>' +
+      '<div style="display:flex;justify-content:center;gap:16px;flex-wrap:wrap;">' +
+      legendItems.join('') + '</div></div>';
+  },
+  _updateMemoryVizDynamic: function () {
+    var viz = document.getElementById('memoryViz');
+    if (!viz) return;
+    var c = this._getMemoryLevelCounts();
+    var total = 0;
+    for (var k in c) total += c[k];
+    if (!total) return;
+    var barContainer = viz.querySelector(':scope > div > div[style*="display:flex"]');
+    if (!barContainer) {
+      var html = this._renderMemoryPanel();
+      var m = html.match(/^<div id="memoryViz"[^>]*>([\s\S]*)<\/div>$/);
+      viz.innerHTML = m ? m[1] : html;
+      return;
+    }
+    var existingBars = barContainer.querySelectorAll('[data-level]');
+    var existingMap = {};
+    for (var e = 0; e < existingBars.length; e++) {
+      existingMap[existingBars[e].getAttribute('data-level')] = existingBars[e];
+    }
+    var currentLevels = [];
+    for (var li = MEMORY_LEVELS.length - 1; li >= 0; li--) {
+      var ml = MEMORY_LEVELS[li];
+      var n = c[ml.level] || 0;
+      if (n > 0) currentLevels.push({ level: ml.level, count: n, color: ml.color, pct: Math.round((n / total) * 100) });
+    }
+    var needsRebuild = false;
+    if (existingBars.length !== currentLevels.length) { needsRebuild = true; }
+    else {
+      for (var cl = 0; cl < currentLevels.length; cl++) {
+        if (!existingMap[currentLevels[cl].level]) { needsRebuild = true; break; }
+      }
+    }
+    if (needsRebuild) {
+      var html2 = this._renderMemoryPanel();
+      var m2 = html2.match(/^<div id="memoryViz"[^>]*>([\s\S]*)<\/div>$/);
+      viz.innerHTML = m2 ? m2[1] : html2;
+      viz.style.animation = 'vizPulse 0.6s ease';
+      setTimeout(function () { if (viz) viz.style.animation = ''; }, 600);
+      return;
+    }
+    var titleEl = viz.querySelector(':scope > div > span');
+    if (titleEl) titleEl.innerHTML = '📊 记忆分布 · 共 ' + total + ' 个词';
+    for (var ci = 0; ci < currentLevels.length; ci++) {
+      var info = currentLevels[ci];
+      var bar = existingMap[info.level];
+      if (bar) {
+        bar.style.width = info.pct + '%';
+        var pctSpan = bar.querySelector('.viz-pct');
+        if (pctSpan) {
+          pctSpan.style.transform = 'scale(1.3)';
+          pctSpan.innerHTML = info.pct + '%';
+          setTimeout(function (s) { if (s) s.style.transform = ''; }, 300, pctSpan);
+        }
+        bar.style.animation = 'vizBarShimmer 0.5s ease';
+        setTimeout(function (b) { if (b) b.style.animation = ''; }, 500, bar);
+      }
+      var legendItems = viz.querySelectorAll('.viz-legend-item[data-level="' + info.level + '"]');
+      if (legendItems.length > 0) {
+        var countEl = legendItems[0].querySelector('.viz-count');
+        var pct2El = legendItems[0].querySelector('.viz-pct2');
+        if (countEl) countEl.innerHTML = info.count;
+        if (pct2El) pct2El.innerHTML = info.pct + '%';
+      }
+    }
+    viz.style.animation = 'none';
+    void viz.offsetWidth;
+    viz.style.animation = 'vizPulse 0.6s ease';
+    setTimeout(function () { if (viz) viz.style.animation = ''; }, 600);
   },
   _pb: function () {
     var names = ['检测', '规划', '词语学习', '最终检验', '报告'];
@@ -147,7 +251,8 @@ const LearningFlowController = {
     this._learnRound++;
     this._qIdx = 0;
     var q = this._plan.priority.concat(this._plan.consolidate);
-    this._queue = q.length ? q : this._plan.quickVerify;
+    var raw = q.length ? q : this._plan.quickVerify;
+    this._queue = this._shuffle(raw);
     this._renderMemoryCard();
   },
   _renderMemoryCard: function () {
@@ -218,7 +323,7 @@ const LearningFlowController = {
         if (w) notMastered.push({ wordId: w.id, word: w.w, meaning: w.m });
       }
     }
-    this._queue = notMastered;
+    this._queue = this._shuffle(notMastered);
     if (!this._queue.length) {
       this.gotoStage('report');
       return;
@@ -284,6 +389,7 @@ const LearningFlowController = {
     var word = this._fw(this._queue[this._qIdx].wordId) || this._queue[this._qIdx];
     var isCorrect = this._checkAnswer(val, word.m);
     var curLevel = this._memoryLevels[word.id];
+    var oldLevel = curLevel;
     if (isCorrect) {
       if (curLevel === 4) this._memoryLevels[word.id] = 5;
       else if (curLevel === 3) this._memoryLevels[word.id] = 4;
@@ -294,34 +400,70 @@ const LearningFlowController = {
       else if (curLevel === 3) this._memoryLevels[word.id] = 2;
       else if (curLevel === 2) this._memoryLevels[word.id] = 1;
     }
+    var newLevel = this._memoryLevels[word.id];
     this._testResults.push({ wordId: word.id, correct: isCorrect, input: val });
+    this._updateMemoryVizDynamic();
+    var oldInfo = MEMORY_LEVELS.find(function (m) { return m.level === oldLevel; });
+    var newInfo = MEMORY_LEVELS.find(function (m) { return m.level === newLevel; });
+    var transitionHtml = '<div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:8px;">' +
+      '<span style="background:' + oldInfo.bg + ';color:' + oldInfo.color + ';padding:4px 10px;border-radius:6px;' +
+      'font-weight:700;font-size:0.85rem;border:1px solid ' + oldInfo.color + '33;">' + oldInfo.label + '</span>' +
+      '<span style="font-size:1.2rem;color:' + (isCorrect ? '#16a34a' : '#dc2626') + ';animation:fcArrow 0.6s ease;">' +
+      (isCorrect ? '➡️' : '⬇️') + '</span>' +
+      '<span style="background:' + newInfo.bg + ';color:' + newInfo.color + ';padding:4px 10px;border-radius:6px;' +
+      'font-weight:700;font-size:0.85rem;border:1px solid ' + newInfo.color + '33;animation:fcPop 0.5s ease;">' +
+      newInfo.label + '</span></div>';
     var fb = document.getElementById('fcFeedback');
     if (fb) {
       if (isCorrect) {
-        fb.innerHTML = '<div style="background:#dcfce7;border-radius:8px;padding:8px;color:#166534;">' +
-          '<span style="font-weight:600;">✅ 正确！</span>' +
-          '<span style="margin-left:8px;color:#374151;">' + word.m + '</span></div>';
-        setTimeout(function () { self._qIdx++; self._renderCheckCard(); }, 2000);
+        fb.innerHTML = '<div style="background:#dcfce7;border-radius:12px;padding:14px;color:#166534;' +
+          'animation:fcCorrect 0.5s ease;text-align:center;">' +
+          '<div style="font-size:1.5rem;margin-bottom:4px;">✅ 正确！</div>' +
+          '<div style="font-size:0.9rem;color:#374151;">' + word.m + '</div>' +
+          transitionHtml + '</div>';
+        setTimeout(function () { self._qIdx++; self._renderCheckCard(); }, 2200);
         return;
       } else {
-        fb.innerHTML = '<div style="background:#fef2f2;border-radius:8px;padding:8px;color:#dc2626;">' +
-          '❌ 正确答案：<b>' + word.m + '</b></div>';
+        fb.innerHTML = '<div style="background:#fef2f2;border-radius:12px;padding:14px;color:#dc2626;' +
+          'animation:fcWrong 0.5s ease;text-align:center;">' +
+          '<div style="font-size:1.5rem;margin-bottom:4px;">❌ 错误</div>' +
+          '<div style="font-size:0.9rem;color:#374151;">正确答案：<b>' + word.m + '</b></div>' +
+          transitionHtml + '</div>';
       }
     }
     this._autoSave();
-    setTimeout(function () { self._qIdx++; self._renderCheckCard(); }, 1200);
+    setTimeout(function () { self._qIdx++; self._renderCheckCard(); }, 2200);
   },
   _fcSkip: function () {
     var self = this;
     var word = this._fw(this._queue[this._qIdx].wordId) || this._queue[this._qIdx];
+    var oldLevel = this._memoryLevels[word.id];
     this._testResults.push({ wordId: word.id, correct: false, input: '' });
+    var oldInfo = MEMORY_LEVELS.find(function (m) { return m.level === oldLevel; });
+    var downLevel = oldLevel > 1 ? oldLevel - 1 : 1;
+    if (oldLevel === 4) this._memoryLevels[word.id] = 3;
+    else if (oldLevel === 3) this._memoryLevels[word.id] = 2;
+    else if (oldLevel === 2) this._memoryLevels[word.id] = 1;
+    var newLevel = this._memoryLevels[word.id];
+    this._updateMemoryVizDynamic();
+    var newInfo = MEMORY_LEVELS.find(function (m) { return m.level === newLevel; });
+    var transitionHtml = '<div style="display:flex;align-items:center;justify-content:center;gap:6px;margin-top:8px;">' +
+      '<span style="background:' + oldInfo.bg + ';color:' + oldInfo.color + ';padding:4px 10px;border-radius:6px;' +
+      'font-weight:700;font-size:0.85rem;border:1px solid ' + oldInfo.color + '33;">' + oldInfo.label + '</span>' +
+      '<span style="font-size:1.2rem;color:#dc2626;animation:fcArrow 0.6s ease;">⬇️</span>' +
+      '<span style="background:' + newInfo.bg + ';color:' + newInfo.color + ';padding:4px 10px;border-radius:6px;' +
+      'font-weight:700;font-size:0.85rem;border:1px solid ' + newInfo.color + '33;animation:fcPop 0.5s ease;">' +
+      newInfo.label + '</span></div>';
     var fb = document.getElementById('fcFeedback');
     if (fb) {
-      fb.innerHTML = '<div style="background:#fef2f2;border-radius:8px;padding:8px;color:#dc2626;">' +
-        '💡 答案：<b>' + word.m + '</b></div>';
+      fb.innerHTML = '<div style="background:#fef2f2;border-radius:12px;padding:14px;color:#dc2626;' +
+        'animation:fcWrong 0.5s ease;text-align:center;">' +
+        '<div style="font-size:1.5rem;margin-bottom:4px;">💡 跳过</div>' +
+        '<div style="font-size:0.9rem;color:#374151;">正确答案：<b>' + word.m + '</b></div>' +
+        transitionHtml + '</div>';
     }
     this._autoSave();
-    setTimeout(function () { self._qIdx++; self._renderCheckCard(); }, 1200);
+    setTimeout(function () { self._qIdx++; self._renderCheckCard(); }, 2200);
   },
   _evaluateCheck: function () {
     var allWordIds = Object.keys(this._memoryLevels);

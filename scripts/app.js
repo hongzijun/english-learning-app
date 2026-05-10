@@ -165,23 +165,26 @@ const App = {
 
     updateNavBadges: function () {
         try {
-            if (typeof Grade7Data !== 'undefined' && Grade7Data.words) {
-                var totalWords = Grade7Data.words.length;
+            if (typeof Grade7Data !== 'undefined' && typeof Grade7Data.getAllWords === 'function') {
+                var words = Grade7Data.getAllWords();
+                var totalWords = words.length;
                 var bWords = document.getElementById('navBadgeWords');
                 if (bWords) bWords.textContent = totalWords + '词';
             }
-            if (typeof Grade7Data !== 'undefined' && Grade7Data.grammar) {
+            if (typeof Grade7Data !== 'undefined' && typeof Grade7Data.getAllGrammar === 'function') {
+                var grammar = Grade7Data.getAllGrammar();
                 var bGrammar = document.getElementById('navBadgeGrammar');
-                if (bGrammar) bGrammar.textContent = Grade7Data.grammar.length + '点';
+                if (bGrammar) bGrammar.textContent = grammar.length + '点';
             }
-            if (typeof Grade7Data !== 'undefined' && Grade7Data.exercises) {
+            if (typeof Grade7Data !== 'undefined' && typeof Grade7Data.getAllExercises === 'function') {
+                var exercises = Grade7Data.getAllExercises();
                 var bExercises = document.getElementById('navBadgeExercises');
-                if (bExercises) bExercises.textContent = Grade7Data.exercises.length + '题';
+                if (bExercises) bExercises.textContent = exercises.length + '题';
             }
             if (typeof SpacedRepetition !== 'undefined') {
                 var allIds = [];
-                if (typeof Grade7Data !== 'undefined' && Grade7Data.words) {
-                    Grade7Data.words.forEach(function (w) { if (w.id) allIds.push(w.id); });
+                if (typeof Grade7Data !== 'undefined' && typeof Grade7Data.getAllWords === 'function') {
+                    Grade7Data.getAllWords().forEach(function (w) { if (w.id) allIds.push(w.id); });
                 }
                 var progress = allIds.length > 0 ? SpacedRepetition.getLearningProgress(allIds) : null;
                 if (progress) {
@@ -233,31 +236,51 @@ const App = {
         });
 
         var sidebarFoldBtn = document.getElementById('sidebarFoldBtn');
-        if (sidebarFoldBtn) {
+        var sidebar = document.getElementById('sidebar');
+        var overlay = document.getElementById('sidebarOverlay');
+        if (sidebarFoldBtn && sidebar) {
             sidebarFoldBtn.addEventListener('click', function () {
-                var sidebar = document.getElementById('sidebar');
-                if (!sidebar) return;
                 if (typeof AudioSystem !== 'undefined' && AudioSystem.playClick) AudioSystem.playClick();
-                var isFolded = sidebar.classList.toggle('folded');
-                var mc = document.querySelector('.main-content');
-                if (mc) mc.classList.toggle('sidebar-folded');
-                sidebarFoldBtn.textContent = isFolded ? '▶' : '◀';
-                sidebarFoldBtn.style.left = isFolded ? '0px' : '280px';
+                if (window.innerWidth > 1024) {
+                    var isFolded = sidebar.classList.toggle('folded');
+                    var mc = document.querySelector('.main-content');
+                    if (mc) mc.classList.toggle('sidebar-folded');
+                    sidebarFoldBtn.textContent = isFolded ? '▶' : '☰';
+                    sidebarFoldBtn.style.left = isFolded ? '0px' : '280px';
+                } else {
+                    var isOpen = sidebar.classList.toggle('open');
+                    sidebarFoldBtn.textContent = isOpen ? '◀' : '☰';
+                    sidebarFoldBtn.style.left = isOpen ? '260px' : '0px';
+                    sidebarFoldBtn.style.borderRadius = isOpen ? '0 6px 6px 0' : '0 6px 6px 0';
+                    sidebarFoldBtn.style.left = isOpen ? '260px' : '0px';
+                }
+            });
+        }
+        if (overlay) {
+            overlay.addEventListener('click', function () {
+                sidebar.classList.remove('open');
+                sidebarFoldBtn.textContent = '☰';
+                sidebarFoldBtn.style.left = '0px';
             });
         }
 
         document.addEventListener('click', function (e) {
-            var sidebar = document.querySelector('.sidebar');
+            var sidebarEl = document.querySelector('.sidebar');
             var toggle = document.getElementById('menuToggle');
-            if (window.innerWidth <= 767 && sidebar && toggle && !sidebar.contains(e.target) && !toggle.contains(e.target)) {
-                sidebar.classList.remove('open');
+            if (window.innerWidth <= 1024 && sidebarEl && toggle && !sidebarEl.contains(e.target) && !toggle.contains(e.target) && !sidebarFoldBtn.contains(e.target)) {
+                sidebarEl.classList.remove('open');
+                sidebarFoldBtn.textContent = '☰';
+                sidebarFoldBtn.style.left = '0px';
             }
         });
 
         window.addEventListener('resize', function () {
-            var sidebar = document.querySelector('.sidebar');
-            if (window.innerWidth > 767 && sidebar) {
-                sidebar.classList.remove('open');
+            var sidebarEl = document.querySelector('.sidebar');
+            if (window.innerWidth > 1024 && sidebarEl) {
+                sidebarEl.classList.remove('open');
+                sidebarEl.classList.remove('folded');
+                sidebarFoldBtn.textContent = '☰';
+                sidebarFoldBtn.style.left = '280px';
             }
         });
     },

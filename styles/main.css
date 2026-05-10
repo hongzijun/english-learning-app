@@ -2,6 +2,25 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
+html {
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+}
+
+body {
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: touch;
+}
+
+input, textarea {
+    -webkit-user-select: text;
+    user-select: text;
 }
 
 :root {
@@ -763,6 +782,241 @@ body {
     }
 }
 
+@media (max-width: 1024px) {
+    .app-layout {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 260px;
+        min-width: 260px;
+        height: 100vh;
+        position: fixed;
+        left: 0;
+        top: 0;
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+        z-index: 1000;
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+        box-shadow: 4px 0 20px rgba(0, 0, 0, 0.2);
+    }
+
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.4);
+        z-index: 999;
+    }
+
+    .sidebar.open + .sidebar-overlay,
+    .sidebar.open ~ .sidebar-overlay {
+        display: block;
+    }
+
+    .main-content {
+        margin-left: 0;
+        padding: 1rem;
+    }
+
+    .top-bar {
+        padding: 0.6rem 0.8rem;
+    }
+
+    #sidebarFoldBtn {
+        left: 0;
+        border-radius: 0 6px 6px 0;
+        width: 28px;
+        height: 44px;
+        font-size: 0.85rem;
+    }
+
+    .sidebar.open ~ .main-content #sidebarFoldBtn,
+    .sidebar.open + .sidebar-overlay ~ .main-content #sidebarFoldBtn {
+        left: 260px;
+    }
+
+    .module-content {
+        padding: 1rem;
+    }
+
+    .card-grid-3 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .card-grid-4 {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .phase-nav {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+
+    .phase-nav::-webkit-scrollbar {
+        display: none;
+    }
+
+    .phase-nav-item {
+        min-width: 80px;
+        padding: 0.4rem 0.6rem;
+        font-size: 0.75rem;
+    }
+
+    .word-big {
+        font-size: 3.5rem;
+    }
+
+    .memory-level-btn {
+        padding: 0.5rem 0.8rem;
+        font-size: 0.85rem;
+    }
+
+    .fc-btn {
+        padding: 0.7rem 1.2rem;
+        font-size: 1rem;
+    }
+
+    #memoryViz {
+        padding: 10px 12px !important;
+    }
+
+    .memory-legend {
+        gap: 4px;
+    }
+
+    .viz-legend-item {
+        font-size: 0.75rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .app-layout {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 75vw;
+        min-width: 260px;
+        max-width: 320px;
+        transform: translateX(-100%);
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+        animation: fadeIn 0.2s ease;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+
+    .sidebar.open ~ .sidebar-overlay,
+    .sidebar.open + .sidebar-overlay {
+        display: block;
+    }
+
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+        padding: 0.8rem;
+    }
+
+    .top-bar {
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    #sidebarFoldBtn {
+        left: 0;
+    }
+
+    .card-grid-2,
+    .card-grid-3,
+    .card-grid-4 {
+        grid-template-columns: 1fr;
+    }
+
+    .word-big {
+        font-size: 3rem;
+    }
+
+    .word-phonetic {
+        font-size: 1rem;
+    }
+
+    .meaning-large {
+        font-size: 1.2rem;
+    }
+
+    .module-title {
+        font-size: 1.1rem;
+    }
+
+    .top-bar-stats {
+        font-size: 0.75rem;
+    }
+
+    .memory-panel {
+        padding: 0.8rem;
+    }
+
+    #memoryViz {
+        padding: 8px 10px !important;
+    }
+
+    .memory-bar-container {
+        height: 32px;
+    }
+
+    .memory-legend {
+        flex-wrap: wrap;
+        gap: 6px;
+    }
+
+    .viz-legend-item {
+        font-size: 0.7rem;
+        padding: 2px 4px;
+    }
+
+    .fc-feedback {
+        padding: 1rem;
+        font-size: 1.1rem;
+    }
+
+    .fc-correct,
+    .fc-wrong {
+        padding: 1.2rem;
+    }
+
+    .plan-summary-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .report-stats {
+        flex-wrap: wrap;
+    }
+
+    .report-stat-item {
+        min-width: 45%;
+    }
+}
+
 @media (max-width: 767px) {
 
     .grid-2,
@@ -1262,4 +1516,48 @@ body {
 
 .streak-active {
     animation: firePulse 1.5s ease infinite;
+}
+
+@keyframes fcCorrect {
+    0% { transform: scale(0.5); opacity: 0; }
+    50% { transform: scale(1.08); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes fcWrong {
+    0% { transform: translateX(-8px); opacity: 0; }
+    20% { transform: translateX(6px); }
+    40% { transform: translateX(-4px); }
+    60% { transform: translateX(2px); }
+    80% { transform: translateX(-1px); }
+    100% { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes fcArrow {
+    0% { transform: translateX(-10px); opacity: 0; }
+    100% { transform: translateX(0); opacity: 1; }
+}
+
+@keyframes fcPop {
+    0% { transform: scale(0.3); opacity: 0; }
+    60% { transform: scale(1.15); }
+    100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes vizPulse {
+    0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4); }
+    50% { box-shadow: 0 0 20px 8px rgba(99, 102, 241, 0.15); transform: scale(1.01); }
+    100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); transform: scale(1); }
+}
+
+@keyframes vizBarShimmer {
+    0% { filter: brightness(1); }
+    50% { filter: brightness(1.4); }
+    100% { filter: brightness(1); }
+}
+
+@keyframes vizNumPop {
+    0% { transform: scale(0.5); opacity: 0; }
+    60% { transform: scale(1.15); }
+    100% { transform: scale(1); opacity: 1; }
 }

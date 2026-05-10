@@ -1,11 +1,11 @@
 const Grade7Data = {
     learningPath: [
-        { id: "unit1", name: "Unit 1 Feelings", desc: "Adj/Adv/Articles", hours: 8 },
-        { id: "unit2", name: "Unit 2 Go For It", desc: "Imperatives/Future", hours: 8 },
-        { id: "unit3", name: "Unit 3 Food Matters", desc: "Gerunds/Frequency", hours: 8 },
-        { id: "unit4", name: "Unit 4 Future Life", desc: "will/there be", hours: 8 },
-        { id: "unit5", name: "Unit 5 Heroes", desc: "Past tenses/Passive", hours: 10 },
-        { id: "unit6", name: "Unit 6 Travel Town", desc: "Prepositions/Directions", hours: 8 }
+        { unitId: 1, id: "unit1", name: "Unit 1 Feelings", desc: "Adj/Adv/Articles", hours: 8 },
+        { unitId: 2, id: "unit2", name: "Unit 2 Go For It", desc: "Imperatives/Future", hours: 8 },
+        { unitId: 3, id: "unit3", name: "Unit 3 Food Matters", desc: "Gerunds/Frequency", hours: 8 },
+        { unitId: 4, id: "unit4", name: "Unit 4 Future Life", desc: "will/there be", hours: 8 },
+        { unitId: 5, id: "unit5", name: "Unit 5 Heroes", desc: "Past tenses/Passive", hours: 10 },
+        { unitId: 6, id: "unit6", name: "Unit 6 Travel Town", desc: "Prepositions/Directions", hours: 8 }
     ],
     unlockConfig: { masterThreshold: 0.7, autoUnlockNext: true },
     learningConfig: {

@@ -280,12 +280,12 @@ const SmartWordsModule = {
             case 'spelling':
                 var wordId1 = this.currentQueue[this.currentIndex];
                 var card1 = SpacedRepetition.getCard(wordId1);
-                shouldUnlock = card1 && card1.spellingStreak >= ach.req;
+                shouldUnlock = card1 && (card1.spellingLevel || 0) >= ach.req;
                 break;
             case 'listening':
                 var wordId2 = this.currentQueue[this.currentIndex];
                 var card2 = SpacedRepetition.getCard(wordId2);
-                shouldUnlock = card2 && card2.listeningStreak >= ach.req;
+                shouldUnlock = card2 && (card2.listeningLevel || 0) >= ach.req;
                 break;
             case 'allround':
                 var allModesUsed = this.modesUsed && this.modesUsed.visual && this.modesUsed.dictation && this.modesUsed.spelling;
